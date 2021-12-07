@@ -4,14 +4,23 @@
 import express from "express";
 
 import { MongoClient } from "mongodb";
+import dotenv from "dotenv";
 
+dotenv.config();
+
+
+console.log(process.env);
 const app = express();
 
-const PORT =9000;
+const PORT =  process.env.PORT;
 
 app.use(express.json());
 
-const Mongo_URL = "mongodb://localhost";
+// /myFirstDatabase?retryWrites=true&w=majority
+
+const Mongo_URL=process.env.Mongo_URL;
+
+// const Mongo_URL = "mongodb://localhost";
 
 async function createConnection(){
 
