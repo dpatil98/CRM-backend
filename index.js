@@ -45,6 +45,12 @@ app.get("/", (request, response )=>{
  });
 
 
+//  async function deleteAllMovies() {
+//     return await client.db("CRMUsers").collection("users").deleteMany({});
+// }
+
+// deleteAllMovies();
+
 app.use("/users", UserRouter);
 
 
