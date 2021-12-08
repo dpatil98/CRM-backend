@@ -7,11 +7,11 @@ import express from "express";
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 import cors from "cors";
+import { UserRouter } from "./routes/usersRoutes.js";
 
 dotenv.config();
 
-
-console.log(process.env);
+// console.log(process.env);
 const app = express();
 
 const PORT =  process.env.PORT;
@@ -34,8 +34,8 @@ async function createConnection(){
     return client;
 }
             
-const client = await createConnection();
-
+export const client = await createConnection();
+ 
 
 app.get("/", (request, response )=>{
 
@@ -45,20 +45,7 @@ app.get("/", (request, response )=>{
  });
 
 
-app.get("/users", async(request, response )=>{
-
-    const users = await client.db("CRMUsers").collection("users").find({}).toArray();
-    response.send(users);
-
-});
-
-app.post("/users", async(request, response )=>{
-
-    const user=request.body;
-    const use = await client.db("CRMUsers").collection("users").insertOne(user);
-    response.send(use);
-
-});
+app.use("/users", UserRouter);
 
 
 app.listen(PORT ,() => console.log("App is started at port :", PORT)
