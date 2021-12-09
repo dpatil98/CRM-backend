@@ -3,12 +3,13 @@ import express from 'express';
 
 const userrouter = express.Router();
 
+
 import{client} from "../index.js"
 
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-
+import auth  from '../middleware/auth.js'
 
 userrouter.get("/", async(request, response )=>{
 
@@ -25,24 +26,30 @@ userrouter.post("/", async(request, response )=>{
 
 });
 
-userrouter.post("/Signup", async(request, response )=>{
+userrouter.post("/Signup", auth , async(request, response )=>{
 
     const{ email, password} =request.body;
     const user = request.body;
     // response.send(user);
     // const users = await postUser(user);
+
+   
+
+       // return response.json({message : "User Will have to login in to post a User"});
+
+    
     
     const result = await CheckEmail(email);
     if(result)
     {
-      response.status(401).send({message :"User Already exits "});  
+      response.status(401).json({message :"User Already exits "});  
     }
     else{
 
         
          user.password=await passwordHashing(password);
          await postUser(user);
-         response.send({message :"User Register Successfully"});
+         response.json({message :"User Register Successfully"});
      }
     
 });
@@ -64,12 +71,14 @@ userrouter.post("/Login", async(request, response )=>{
         
         if(!isPasswordMatched)
         {
-            response.status(401).send({message :"Wrong User Credentials", password});
+            // response.status(401).send({message :"Wrong User Credentials", password});
+            response.status(401).json({message :"Wrong User Credentials", password});
         }
         else{
 
-           const token= jwt.sign({id:EmailFound._id}, process.env.Secret_Key);
-            response.send(EmailFound);
+           const token= jwt.sign({id:EmailFound._id}, process.env.Secret_Key, {expiresIn:"1h"} );
+            // response.send(EmailFound);
+            response.status(200).json({user: EmailFound , token :token })
         }
        
          
