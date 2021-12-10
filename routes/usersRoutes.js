@@ -42,14 +42,14 @@ userrouter.post("/Signup", auth , async(request, response )=>{
     const result = await CheckEmail(email);
     if(result)
     {
-      response.status(401).json({message :"User Already exits "});  
+      response.status(401).json({message :"User Already exits " , status:"401" });  
     }
     else{
 
         
          user.password=await passwordHashing(password);
          await postUser(user);
-         response.json({message :"User Register Successfully"});
+         response.json({message :"User Register Successfully" , status:"200" });
      }
     
 });
