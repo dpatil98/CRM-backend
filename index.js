@@ -8,6 +8,7 @@ import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 import cors from "cors";
 import { UserRouter } from "./routes/usersRoutes.js";
+import { DashboardRouter } from "./routes/dashboardRoutes.js";
 
 dotenv.config();
 
@@ -51,7 +52,14 @@ app.get("/", (request, response )=>{
 
 // deleteAllMovies();
 
+//  async function deleteAllLeads() {
+//     return await client.db("CRMUsers").collection("customers").deleteMany({});
+// }
+
+// deleteAllLeads();
+
 app.use("/users", UserRouter);
+app.use("/Dashboard", DashboardRouter);
 
 
 app.listen(PORT ,() => console.log("App is started at port :", PORT)
