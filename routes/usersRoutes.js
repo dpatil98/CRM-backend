@@ -7,7 +7,7 @@ import fs from 'fs/promises';
 const userrouter = express.Router();
 
 import{client} from "../index.js"
-import auth  from '../middleware/auth.js'
+import Signupauth  from '../middleware/auth.js'
 import { ObjectId } from 'mongodb';
 
 import { createRequire } from "module";
@@ -33,19 +33,14 @@ userrouter.post("/", async(request, response )=>{
 
 });
 
-userrouter.post("/Signup", auth , async(request, response )=>{
+userrouter.post("/Signup", Signupauth , async(request, response )=>{
 
     const{ email, password} =request.body;
     const user = request.body;
     // response.send(user);
     // const users = await postUser(user);
 
-   
-
-       // return response.json({message : "User Will have to login in to post a User"});
-
-    
-    
+    // return response.json({message : "User Will have to login in to post a User"});
     const result = await CheckEmail(email);
     if(result)
     {
