@@ -58,6 +58,24 @@ app.get("/", (request, response )=>{
 
 // deleteAllLeads();
 
+
+// const a= CreateIndexText();
+// async function CreateIndexText() {
+   
+//     console.log("Success")
+//  return await  client.db("CRMUsers").collection("customers").createIndex({  status:"text" ,firstName:"text" ,lastName:"text",  email:"text" ,assignedEmp:"text"  , date:"text"  });
+// }
+// console.log(a , "Success")
+
+// const a= CreateIndexText();
+// async function CreateIndexText() {
+   
+//     console.log("Success")
+//  return await  client.db("CRMUsers").collection("serviceRequestsData").createIndex({  status:"text",shortDesc:"text" ,firstName:"text" ,lastName:"text",  email:"text" ,assignedEmp:"text"  , date:"text"  });
+// }
+// console.log(a , "Success")
+
+
 app.use("/users", UserRouter);
 app.use("/Dashboard", DashboardRouter);
 

@@ -95,6 +95,17 @@ dashboardrouter.post("/DeleteLead", auth, async(request, response )=>{
     
 });
 
+dashboardrouter.post("/SearchLead", auth,async(request, response )=>{
+
+   //await client.db("CRMUsers").collection("customers").find({}).toArray();
+   const {searchThisLead} =request.body;
+   console.log("Searching...");
+    const FoundLeads =   await client.db("CRMUsers").collection("customers").find( { $text: { $search: searchThisLead} } ).toArray();
+     (!FoundLeads[0])  ? response.json({message:"Not Found" }) : response.json({message:"Found" , result:FoundLeads});
+   
+
+});
+
 // --------Service Requests-------------
 
 dashboardrouter.get("/ServiceRequests", async(request, response )=>{
@@ -163,7 +174,14 @@ dashboardrouter.post("/DeleteServiceReq" , auth, async(request, response )=>{
     
 });
 
-
+dashboardrouter.post("/SearchServiceRequest", auth, async(request, response )=>{
+    
+    const {searchThisRequest} =request.body;
+    console.log("Searching ServiceRequest...");
+    const FoundResults =   await client.db("CRMUsers").collection("serviceRequestsData").find( { $text: { $search: searchThisRequest} } ).toArray();
+    (!FoundResults[0])  ? response.json({message:"Not Found" }) : response.json({message:"Found" , result:FoundResults});
+ 
+ });
 
 
 
@@ -215,5 +233,6 @@ async function CheckServiceReq(id) {
 async function DeleteServiceReq(id) {
     return await client.db("CRMUsers").collection("serviceRequestsData").deleteOne({_id : ObjectId(id)});
 }
+
 
 export const DashboardRouter = dashboardrouter;
