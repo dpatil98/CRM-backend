@@ -23,15 +23,7 @@ userrouter.get("/", async(request, response )=>{
     const users = await getAllUsers();
     response.send(users);
 
-});
-
-userrouter.post("/", async(request, response )=>{
-
-    const user=request.body;
-    const users = await postUser(user);
-    response.send(users);
-
-});
+});//for postman
 
 userrouter.post("/Signup", Signupauth , async(request, response )=>{
 
