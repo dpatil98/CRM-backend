@@ -183,6 +183,78 @@ dashboardrouter.post("/SearchServiceRequest", auth, async(request, response )=>{
  
  });
 
+//-----------------Users--------------------
+
+dashboardrouter.get("/AllUsers", async(request, response )=>{
+    
+    const users = await getAllUsers();
+    // console.log(users);
+    response.send(users);
+
+});
+
+dashboardrouter.post("/EditUser", auth, async(request, response )=>{
+
+    const{email} =request.body;
+    const userData = request.body;
+    
+
+    const Emailresult = await CheckUserEmail(email);
+    //  console.log("Email Res",Emailresult);
+    console.log( Object.keys(Emailresult).length);
+    if(Object.keys(Emailresult).length>=2)
+    {
+      response.status(401).json({message :"Email Already Exists" , status:"401" });  
+    }
+    else{
+         await UpdateUser(userData);
+        //  console.log("userData", userData);
+         response.json({message :"User Updated Successfully" , status:"200" });
+
+     }
+     
+});
+
+dashboardrouter.post("/DeleteUser", auth, async(request, response )=>{
+
+    const{id} =request.body;
+    const userData = request.body; 
+    // const  AE_firstName = assignedEmp.split(" ")[0];
+    // const  AE_lastName = assignedEmp.split(" ")[1];
+
+    
+    // const result = await CheckEmp(AE_firstName,AE_lastName);
+    const result = await CheckUser(id);
+    // const Emailresult = await CheckEmail(email);
+    //  console.log("Delete result",id);
+    if(!result)
+    {
+      response.status(401).json({message :"Invalid user" , status:"401" });  
+    }
+    else{
+         await DeleteUser(id);
+         console.log("Deleted", userData);
+         response.json({message :"User Deleted Successfully" , status:"200" });
+
+     }
+    
+});
+
+dashboardrouter.post("/SearchUsers", auth,async(request, response )=>{
+
+   //await client.db("CRMUsers").collection("customers").find({}).toArray();
+   const {searchThisUser} =request.body;
+   console.log("Searching...");
+    const FoundUsers =   await client.db("CRMUsers").collection("users").find( { $text: { $search: searchThisUser} } ).toArray();
+     (!FoundUsers[0])  ? response.json({message:"Not Found" }) : response.json({message:"Found" , result:FoundUsers});
+   
+
+});
+
+
+
+
+
 
 
 
@@ -211,7 +283,7 @@ async function DeleteLead(id) {
     return await client.db("CRMUsers").collection("customers").deleteOne({_id : ObjectId(id)});
 }
 
-// --------------------------------------------------------------------
+// -----------------------ServiceReq Collection-------------------------------------
 async function GetServiceRequests() {
     return await client.db("CRMUsers").collection("serviceRequestsData").find({}).toArray();
 }
@@ -234,5 +306,28 @@ async function DeleteServiceReq(id) {
     return await client.db("CRMUsers").collection("serviceRequestsData").deleteOne({_id : ObjectId(id)});
 }
 
+//------------users collection-------------------------
+
+async function getAllUsers() {
+    return await client.db("CRMUsers").collection("users").find({}).toArray();
+}
+
+async function CheckUserEmail(email) {
+    return await client.db("CRMUsers").collection("users").find({ email: email }).toArray();
+}
+
+async function UpdateUser(user) {
+    return await client.db("CRMUsers").collection("users").updateOne({_id : ObjectId(user.id) }, { $set: { firstName:user.firstName ,lastName:user.lastName, email:user.email ,access_lvl : user.access_lvl} });
+}
+
+async function DeleteUser(id) {
+    return await client.db("CRMUsers").collection("users").deleteOne({_id : ObjectId(id)});
+
+}
+
+async function CheckUser(id) {
+    return await client.db("CRMUsers").collection("users").findOne( {_id : ObjectId(id) });
+
+}
 
 export const DashboardRouter = dashboardrouter;
