@@ -84,6 +84,15 @@ app.get("/", (request, response )=>{
 // console.log(a , "Success")
 
 
+// const a= CreateIndexText();
+// async function CreateIndexText() {
+   
+//     console.log("Success")
+//  return await  client.db("CRMUsers").collection("contactsData").createIndex({  firstName:"text" ,lastName:"text",  email:"text" , addedBy :"text" , addedById:"text" , mobileNo:"text", address:"text" ,date:"text" });
+// }
+// console.log(a , "Success")
+
+
 app.use("/users", UserRouter);
 app.use("/Dashboard", DashboardRouter);
 

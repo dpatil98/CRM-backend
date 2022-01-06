@@ -183,6 +183,84 @@ dashboardrouter.post("/SearchServiceRequest", auth, async(request, response )=>{
  
  });
 
+
+// --------Contacts------------- 
+
+dashboardrouter.get("/Contacts", async(request, response )=>{
+
+    const customers = await GetContacts();
+    response.json(customers);
+
+})
+
+dashboardrouter.post("/AddContact" , async(request, response )=>{
+
+    const ServiceReq = request.body;
+    ServiceReq.date=new Date().toISOString().slice(0,10);
+    await PostContact(ServiceReq);
+    response.json({message :"User Register Successfully" , status:"200" });
+  
+})
+
+dashboardrouter.post("/EditContact", auth, async(request, response )=>{
+
+    const{addedBy} =request.body;
+    const contactData = request.body;
+    
+    const  AE_firstName = addedBy.split(" ")[0];
+    const  AE_lastName = addedBy.split(" ")[1];
+
+    
+    const result = await CheckEmp(AE_firstName,AE_lastName);
+    // const Emailresult = await CheckEmail(email);
+    //  console.log("Add Lead",result);
+    if(!result)
+    {
+      response.status(401).json({message :"invalid Employee Name" , status:"401" });  
+    }
+    else{
+         await UpdateContact(contactData);
+        
+         response.json({message :"User Register Successfully" , status:"200" });
+
+     }
+    
+});
+
+dashboardrouter.post("/DeleteContact" , auth, async(request, response )=>{
+
+    const {id} =request.body;
+    const leadData = request.body; 
+    // const  AE_firstName = assignedEmp.split(" ")[0];
+    // const  AE_lastName = assignedEmp.split(" ")[1];
+
+    
+    // const result = await CheckEmp(AE_firstName,AE_lastName);
+    const result = await  CheckContact(id);
+    // const Emailresult = await CheckEmail(email);
+    //  console.log("Delete result",id);
+    if(!result)
+    {
+      response.status(401).json({message :"Invalid Customer" , status:"401" });  
+    }
+    else{
+         await DeleteContact(id);
+         console.log("Deleted", leadData);
+         response.json({message :"Lead Deleted Successfully" , status:"200" });
+
+     }
+    
+});
+
+dashboardrouter.post("/SearchContacts", async(request, response )=>{
+    
+    const {searchThisContact} =request.body;
+    console.log("Searching ServiceRequest...");
+    const FoundResults =   await SearchContact(searchThisContact);
+    (!FoundResults[0])  ? response.json({message:"Not Found" }) : response.json({message:"Found" , result:FoundResults});
+ 
+ })
+
 //-----------------Users--------------------
 
 dashboardrouter.get("/AllUsers", async(request, response )=>{
@@ -258,6 +336,8 @@ dashboardrouter.post("/SearchUsers", auth,async(request, response )=>{
 
 
 
+
+
 async function postLead(lead) {
     return await client.db("CRMUsers").collection("customers").insertOne(lead);
 }
@@ -304,6 +384,34 @@ async function CheckServiceReq(id) {
 
 async function DeleteServiceReq(id) {
     return await client.db("CRMUsers").collection("serviceRequestsData").deleteOne({_id : ObjectId(id)});
+}
+
+
+// -----------------------Contacts Collection-------------------------------------
+async function GetContacts() {
+    return await client.db("CRMUsers").collection("contactsData").find({}).toArray();
+}
+
+
+async function PostContact(contactData) {
+    return await client.db("CRMUsers").collection("contactsData").insertOne(contactData);
+}
+
+async function UpdateContact(contactData) {
+    return await client.db("CRMUsers").collection("contactsData").updateOne({_id : ObjectId(contactData.id) }, { $set: {  addedBy:contactData.addedBy, firstName:contactData.firstName ,lastName:contactData.lastName, email:contactData.email , addedById:contactData. addedById , address:contactData.address , date:contactData.date } });
+}
+
+async function SearchContact(searchThisRequest) {
+    return await client.db("CRMUsers").collection("contactsData").find({ $text: { $search: searchThisRequest } }).toArray();
+}
+
+async function CheckContact(id) {
+    return await client.db("CRMUsers").collection("contactsData").findOne( {_id : ObjectId(id) });
+
+}
+
+async function DeleteContact(id) {
+    return await client.db("CRMUsers").collection("contactsData").deleteOne({_id : ObjectId(id)});
 }
 
 //------------users collection-------------------------
