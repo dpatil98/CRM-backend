@@ -82,7 +82,7 @@ userrouter.post("/Login", async(request, response )=>{
     
 });
 
-
+//Email checking and sending mail to user
 userrouter.post("/ForgotPassword", async(request, response )=>{
 
     const{ email} = request.body;
@@ -121,12 +121,13 @@ userrouter.post("/ForgotPassword", async(request, response )=>{
         //     console.dir(reply);
         // });
 
-         response.status(200).json({message :" Reset link has been sent to ur Email!", Status :"200" })   
-       // response.status(200).json(link)   ;
+         //response.status(200).json({message :" Reset link has been sent to ur Email!", Status :"200" })   
+         response.status(200).json({message :"For Demo purpose reset link is Given here, otherwise it can be sent to Email Using Nodemailer" , link:link })   ;
      }
     
 });
 
+//receving pa
 userrouter.post("/reset-password", async(request, response )=>{ 
 
     const {id , FT} =request.body;
